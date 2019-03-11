@@ -1,10 +1,5 @@
 #include <iostream>
-#include <vector>
-#include <list>
-#include <set>
-#include <map>
-#include <algorithm>
-#include <bitset>
+
 using namespace std;
 template <typename T = int>
 T in() {
@@ -12,27 +7,19 @@ T in() {
     cin >> temp;
     return temp;
 }
-/*
-uint64_t GetXor (uint64_t A, uint64_t B) {
-    uint64_t ret;
-    for (uint64_t i = A; i <=B; i++) {
-        if (i == A) ret = i;
-        else ret ^= i;
-    }
-    return ret;
-}
-*/
-class XorWorld {
-    uint64_t A;
-    uint64_t B;
-    uint64_t diff;
 
-    static uint64_t constexpr period = 4;
-    static uint64_t constexpr periodicMask = period - 1;
+class XorWorld {
+    uint64_t const A;
+    uint64_t const B;
+    uint64_t const diff;
+
+    static uint64_t constexpr period = 4; // = 100b
+    static uint64_t constexpr periodicMask = period - 1; // = 011b
+
 public : 
     XorWorld(uint64_t A_p, uint64_t B_p) : A(min(A_p, B_p)), B(max(A_p,B_p)), diff(B - A + 1) {}
 
-    uint64_t GetXor (uint64_t A, uint64_t B) {
+    uint64_t GetXor () const {
         uint64_t ret;
         for (uint64_t i = A; i <=B; i++) {
             if (i == A) ret = i;
@@ -41,42 +28,29 @@ public :
         return ret;
     }
 
-    uint64_t Calculate() {
-        uint64_t ret;
-     if (diff < (period + 1)) {
-            ret = GetXor(A, B);
-        } else {
-                    
-            if ((A & 1) == 0) {
-                
-                diff = (diff & periodicMask);
-                A = B - diff + 1;
-                ret = GetXor(A, B);
-               
-            } else if ((B & 1) == 1) {
-                diff = (diff & periodicMask);
-                B = A + diff - 1;
-                ret = GetXor(A, B);
+    uint64_t Calculate() const {
 
-            // Both are odd numbers
-            } else {
-                uint64_t A1 = A + 1;
-                diff--;
-                diff = (diff & periodicMask);
-                A1 = B - diff + 1;
-                ret = A ^ GetXor(A1, B);
-            }
+        // When the size is too small, no problem even calculate greedly
+        if (diff < (period + 1)) return GetXor();
+       
+        // Otherwise retry calculating after getting new A
+        // If the A is even number.
+        // Shorten A to (B - 1), (B - 2), (B - 3).            
+        //return subWorld.Calculate();
+        if ((A & 1) == 0) {
+            uint64_t newDiff = (diff & periodicMask);
+            if (newDiff == 0) newDiff = 4;
+            else return XorWorld(B - newDiff + 1, B).Calculate();
         }
-        return ret;   
-    }
 
+        // Otherwise A is odd number and size is very large.
+        // Separate numbers to A and then after((A + 1)(must be even number) to B)
+        return A ^ XorWorld(A + 1, B).Calculate();
+    }
 };
 int main() {
     uint64_t A(in<uint64_t>()), B(in<uint64_t>());
-//    uint64_t diff = B - A + 1;
-    XorWorld world(A, B);
-   
-//     cout << exa << endl; 
+    XorWorld const world(A, B);
     cout << world.Calculate() << endl;
     return 0;
 }
