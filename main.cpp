@@ -12,6 +12,11 @@ T in() {
     return temp;
 }
 
+list<size_t> const LR(size_t start, size_t end) {
+    list<size_t> ret;
+    for (size_t i = start; i < end; i++) ret.push_back(i);
+    return move(ret);
+}
 
 int main() {
   
