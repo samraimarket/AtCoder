@@ -7,19 +7,15 @@
 using namespace std;
 template <typename T = int>
 T in() {
-    T temp;
-    cin >> temp;
-    return temp;
+    T temp; cin >> temp; return temp;
 }
 
-list<size_t> const LR(size_t start, size_t end) {
-    list<size_t> ret;
-    for (size_t i = start; i < end; i++) ret.push_back(i);
-    return move(ret);
+template <typename VType = int>
+list<VType> const LR(VType start, VType end) {
+    list<VType> ret; for (VType i = start; i < end; i++) ret.push_back(i); return move(ret);
 }
 
 int main() {
-  
     return 0;
 }
 
